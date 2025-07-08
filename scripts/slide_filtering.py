@@ -24,9 +24,11 @@ from config import (
     BLACK_THRESH,
     BLACK_RATIO,
     OCR_ENGINE,
+    EASY_OCR_LANG,
+    TESSERACT_LANG
 )
 
-reader = easyocr.Reader(['en', 'fa']) if OCR_ENGINE == "easyocr" else None
+reader = easyocr.Reader(EASY_OCR_LANG) if OCR_ENGINE == "easyocr" else None
 
 
 def clean_text(text):
@@ -57,13 +59,13 @@ def ocr_text(img_path):
         except Exception as e:
             print(f"⚠️ EasyOCR failed: {e}")
             try:
-                text = pytesseract.image_to_string(gray, lang="eng+fas")
+                text = pytesseract.image_to_string(gray, lang=TESSERACT_LANG)
             except Exception as e2:
                 print(f"⚠️ Tesseract also failed: {e2}")
                 text = ""  # Empty OCR result, fallback handled elsewhere
     else:  # OCR_ENGINE == "tesseract"
         try:
-            text = pytesseract.image_to_string(gray, lang="eng+fas")
+            text = pytesseract.image_to_string(gray, lang=TESSERACT_LANG)
         except Exception as e:
             print(f"⚠️ Tesseract failed: {e}")
             try:
@@ -88,14 +90,14 @@ def image_hash(path):
 def is_similar(prev_text, curr_text, prev_hash, curr_hash):
     if curr_text.strip() and prev_text.strip():
         ratio = similar_text_ratio(prev_text, curr_text)
-        # if 0.75 < ratio < 0.95:
-        #     print("🧐 Suspicious similarity range:")
-        #     print(curr_text)
-        #     print("#######################################")
-        #     print(prev_text)
-        #     print("#######################################")
-        #     print(f"Ratio: {ratio}")
-        return ratio >= OCR_SIM_THRESHOLD
+        if 0.75 < ratio < 0.92:
+            print("🧐 Suspicious similarity range:")
+            print(curr_text)
+            print("#######################################")
+            print(prev_text)
+            print("#######################################")
+            print(f"Ratio: {ratio}")
+        return ratio >= OCR_SIM_THRESHOLD or (abs(len(curr_text)-len(prev_text))<5 and ratio >=0.5)
     else:
         print("🔁 Fallback to hash comparison")
         return prev_hash - curr_hash <= HASH_SIM_THRESHOLD

@@ -88,4 +88,10 @@ BLACK_THRESH = 20      # Pixel value below which is considered black
 BLACK_RATIO = 0.8      # Ratio of black pixels to consider as a border
 
 # OCR engine to use: "tesseract" (default, requires Tesseract installed) or "easyocr" (Python-based)
-OCR_ENGINE = "tesseract"  # or "easyocr"
+OCR_ENGINE = "easyocr"  # or "easyocr"
+
+
+
+# Language of the ocr engines
+EASY_OCR_LANG=['en'] # ['en', 'fa']
+TESSERACT_LANG="eng" # "eng+fas"

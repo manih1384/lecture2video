@@ -12,7 +12,7 @@ def run_script(script_path: str):
 
 if __name__ == "__main__":
     scripts = [
-        os.path.join('scripts', 'frame_extraction.py'),
+        # os.path.join('scripts', 'frame_extraction.py'),
         os.path.join('scripts', 'slide_filtering.py'),
         os.path.join('scripts', 'export_pdf.py'),
     ]
