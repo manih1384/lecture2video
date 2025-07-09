@@ -10,7 +10,8 @@ import easyocr
 import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
+from Levenshtein import distance as levenshtein_distance
+import re
 from config import (
     FRAME_OUTPUT_DIR as INPUT_DIR,
     SLIDE_OUTPUT_DIR as OUTPUT_DIR,
@@ -25,7 +26,9 @@ from config import (
     BLACK_RATIO,
     OCR_ENGINE,
     EASY_OCR_LANG,
-    TESSERACT_LANG
+    TESSERACT_LANG,
+    LEV_DIST,
+    LEN_THRES
 )
 
 reader = easyocr.Reader(EASY_OCR_LANG) if OCR_ENGINE == "easyocr" else None
@@ -87,17 +90,61 @@ def image_hash(path):
         return imagehash.phash(img)
 
 
+
+def normalize(text: str) -> str:
+    replacements = {
+        'o': '0', 'q': '0',
+        'l': '1', 'i': '1', ']': '1', '|': '1',
+        's': '5',
+        'z': '2',
+        'b': '8',
+    }
+
+    # Normalize digits and case
+    text = text.lower()
+    text = text.replace("۰", "0").replace("۱", "1").replace("۲", "2") \
+               .replace("۳", "3").replace("۴", "4").replace("۵", "5") \
+               .replace("۶", "6").replace("۷", "7").replace("۸", "8") \
+               .replace("۹", "9")
+
+    for k, v in replacements.items():
+        text = text.replace(k, v)
+
+    # Remove spaces and basic punctuation
+    text = re.sub(r'[\s\-\.\_]', '', text)
+    
+    return text.strip()
+
+
+
+
+def similar_text_ratio(a: str, b: str) -> float:
+    return SequenceMatcher(None, a, b).ratio()
+
 def is_similar(prev_text, curr_text, prev_hash, curr_hash):
     if curr_text.strip() and prev_text.strip():
-        ratio = similar_text_ratio(prev_text, curr_text)
+        norm_prev = normalize(prev_text)
+        norm_curr = normalize(curr_text)
+        log_file_path = os.path.join(OUTPUT_DIR, "similarity_log.txt")
+
+        ratio = similar_text_ratio(norm_prev, norm_curr)
+        lev_dist = levenshtein_distance(norm_prev, norm_curr)
+        len_diff = abs(len(norm_prev) - len(norm_curr))
+        sim= (
+            ratio >= OCR_SIM_THRESHOLD or
+            lev_dist <= LEV_DIST or
+            (len_diff <= LEN_THRES and ratio >= 0.75)
+        )
         if 0.75 < ratio < 0.92:
-            print("🧐 Suspicious similarity range:")
-            print(curr_text)
-            print("#######################################")
-            print(prev_text)
-            print("#######################################")
-            print(f"Ratio: {ratio}")
-        return ratio >= OCR_SIM_THRESHOLD or (abs(len(curr_text)-len(prev_text))<5 and ratio >=0.5)
+            with open(log_file_path, "a", encoding="utf-8") as f:
+                f.write("🧐 Suspicious similarity range:\n")
+                f.write(curr_text + "\n")
+                f.write("#######################################\n")
+                f.write(prev_text + "\n")
+                f.write("#######################################\n")
+                f.write(f"🔍 Ratio: {ratio:.4f}, Levenshtein: {lev_dist}, Length Diff: {len_diff}, sim? {sim}")
+
+        return sim
     else:
         print("🔁 Fallback to hash comparison")
         return prev_hash - curr_hash <= HASH_SIM_THRESHOLD

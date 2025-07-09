@@ -95,3 +95,8 @@ OCR_ENGINE = "easyocr"  # or "easyocr"
 # Language of the ocr engines
 EASY_OCR_LANG=['en'] # ['en', 'fa']
 TESSERACT_LANG="eng" # "eng+fas"
+
+
+# if levenshtein distance or length difference of extracted text is below a certain number count them as similar
+LEN_THRES=5
+LEV_DIST=5

@@ -1,70 +1,112 @@
-# Slide Extractor from Lecture Videos
+Absolutely, Mani — here’s a **refined and more polished version of your README**, with a tone that balances clarity and humility (since it’s a hobby project):
 
-This project extracts slides from educational videos by converting videos to frames, filtering unique slides, and exporting them as PDFs. It is designed for lecture or presentation videos, supporting slides in multiple languages (e.g., Farsi, English).
+---
 
-## Features
-- Extracts frames from videos at configurable intervals
-- Filters frames to keep only unique slides (using OCR and image hashing)
-- Supports multilingual slide text (e.g., Farsi, English)
-- Exports slides as PDFs with optional page numbers
-- Easy configuration and batch processing
+# 📘 Slide Extractor from Lecture Videos
 
-## Installation
+A lightweight, Python-based tool for extracting clean slides from educational videos. It works by converting video frames into images, detecting slide transitions using OCR and image hashing, and exporting distinct slides into PDF documents.
+
+This is a personal hobby project, and while it works well for my needs, it's still evolving — so expect occasional quirks or room for improvement. Feedback and suggestions are welcome!
+
+---
+
+## ✨ Features
+
+* ⏱️ Configurable frame extraction (e.g., every N seconds)
+* 🔍 OCR-based and hash-based filtering to keep only **distinct slides**
+* 🌐 Multilingual support (can be edited in cofig file)
+* 📄 Export selected slides as clean PDFs
+* ⚙️ customizable via `config.py`
+* 🗃️ Basic batch processing for multiple videos
+
+---
+
+## 🛠 Installation
+
 1. **Clone the repository:**
+
    ```bash
-   git clone <your-repo-url>
-   cd Statiscal_Inference
+   git clone https://github.com/your_username/lecture2video.git
+   cd lecture2video
    ```
+
 2. **Install dependencies:**
+
    ```bash
    pip install -r requirements.txt
    ```
-3. **Install Tesseract (if using default OCR):**
-   - Windows: Download from [here](https://github.com/tesseract-ocr/tesseract)
-   - Or use `easyocr` by changing `OCR_ENGINE` in `config.py`
 
-## Usage
-1. **Place your videos** in the `videos/` folder. Supported formats: `.mp4`, `.mkv`, `.avi` (configurable).
-2. **Configure settings** in `config.py` as needed (see comments in the file).
+3. **Install Tesseract OCR (if using default OCR engine):**
+
+   * Windows: [Download here](https://github.com/tesseract-ocr/tesseract)
+   * Alternative: Use `easyocr` by changing the `OCR_ENGINE` option in `config.py`
+
+---
+
+## ▶️ Usage
+
+1. **Put your videos** inside the `videos/` folder (formats: `.mp4`, `.mkv`, `.avi`, etc.)
+
+2. **Configure settings** in `config.py`. You'll find clear comments explaining each option.
+
 3. **Run the pipeline:**
+
    ```bash
    python run_pipline.py
    ```
+
    This will:
-   - Extract frames to `frames/`
-   - Filter slides to `slides/`
-   - (You may need to run the PDF export manually for each folder, or modify the pipeline to do so.)
 
-4. **Find your PDFs** in the output folder you specify (or add a step to export all slides to PDFs).
+   * Extract frames into `frames/`
+   * Filter out repetitive frames and save key slides in `slides/`
+   * (Optional) Export to PDF using a script or manually
 
-## Configuration
-All settings are in `config.py` with detailed comments. Key options:
-- `FRAME_INTERVAL`: Seconds between frames
-- `OCR_ENGINE`: "tesseract" or "easyocr"
-- `TRANSLATION_MAP`: Map non-English video names to safe folder names
-- `CLEAN_TEXT_PATTERNS`: Remove these from OCR before comparing slides
-- Border and threshold settings for OCR and cropping
+4. **Get your final slides** in PDF format — either run the export manually or extend the pipeline to automate this step.
 
-## Project Structure
+---
+
+## ⚙️ Configuration Highlights (`config.py`)
+
+* `FRAME_INTERVAL`: Time (in seconds) between extracted frames
+* `OCR_ENGINE`: Choose `"tesseract"` or `"easyocr"`
+* `TRANSLATION_MAP`: Map non-English video titles to safe folder names
+* `CLEAN_TEXT_PATTERNS`: Regex patterns to clean noisy OCR output
+* `CROP_MARGIN`, `HASH_SIM_THRESHOLD`, `OCR_SIM_THRESHOLD`: Finetune filtering sensitivity
+
+---
+
+## 📁 Project Structure
+
 ```
-Statiscal_Inference/
-├── videos/      # Input videos
-├── frames/      # Extracted frames (auto-generated)
-├── slides/      # Filtered slides (auto-generated)
-├── pdfs/        #Final PDFs go here
-├── scripts/     # Processing scripts
-├── run_pipline.py  # Main pipeline runner
-├── config.py    # Configuration file
+lecture2video/
+├── videos/          # Input videos
+├── frames/          # Auto-generated raw frames
+├── slides/          # Filtered slides (clean and distinct)
+├── pdfs/            # Final exported PDFs
+├── scripts/         # Supporting scripts for processing
+├── run_pipline.py   # Main entry point
+├── config.py        # All the settings
 ├── requirements.txt
 ```
 
-## Tips
-- For best results, use high-quality videos with clear slides.
-- Adjust `FRAME_INTERVAL` and thresholds in `config.py` for your content.
-- If you have non-English video names, add them to `TRANSLATION_MAP`.
+---
 
-## License
-MIT License (add a LICENSE file if you want to specify this)
+## 💡 Tips & Notes
 
-## Acknowledgements
-- OpenCV, Tesseract, EasyOCR, Pillow, imagehash, tqdm 
+* 📺 Use clean, high-resolution videos for best OCR performance
+* 🧪 Play with `FRAME_INTERVAL`, OCR thresholds, and hash tolerance to tune results
+* 🈷 If working with non-English titles, use the `TRANSLATION_MAP` to avoid folder naming issues
+
+---
+
+## 📌 Known Limitations
+
+* Minor OCR inconsistencies (like confusing `O` with `0`, or `l` with `1`) may affect similarity detection — normalization is handled, but not perfect
+* Frame comparison relies on both text and visual hash — tweaking thresholds might be necessary
+* Some false positives/negatives may occur depending on slide layout or video compression
+
+---
+
+## 🧪 Status
+
+> 🚧 This is a personal, hobby-grade project and **not production-ready**. I'm sharing it in the hope that others might find it useful or build upon it. Use at your own discretion :)
