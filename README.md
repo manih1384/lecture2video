@@ -1,7 +1,3 @@
-Absolutely, Mani — here’s a **refined and more polished version of your README**, with a tone that balances clarity and humility (since it’s a hobby project):
-
----
-
 # 📘 Slide Extractor from Lecture Videos
 
 A lightweight, Python-based tool for extracting clean slides from educational videos. It works by converting video frames into images, detecting slide transitions using OCR and image hashing, and exporting distinct slides into PDF documents.
@@ -109,4 +105,4 @@ lecture2video/
 
 ## 🧪 Status
 
-> 🚧 This is a personal, hobby-grade project and **not production-ready**. I'm sharing it in the hope that others might find it useful or build upon it. Use at your own discretion :)
+> 🚧 This is a personal, hobby project and **not production-ready**. I'm sharing it in the hope that others might find it useful or build upon it. Use at your own discretion :)
